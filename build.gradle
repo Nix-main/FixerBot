@@ -1,0 +1,23 @@
+plugins {
+    id 'java'
+}
+
+group = 'amber.io'
+version = '1.0'
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation 'net.dv8tion:JDA:5.6.1'
+    implementation 'ch.qos.logback:logback-classic:1.5.6'
+    implementation 'com.google.code.gson:gson:2.10.1'
+}
+
+jar {
+    enabled = false
+
+    manifest {
+        attributes 'Main-Class': 'amber.io.ThunderBot'
+    }
+}
