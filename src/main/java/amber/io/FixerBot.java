@@ -107,7 +107,7 @@ public class FixerBot {
             }
             eb.addField("Links", pageLink + " | " + downloadLink + (vals[9].isEmpty() ? "" : " | " + siteLink), false);
             if (!vals[2].isEmpty()) {
-                String[] depArr = vals[2].split("\\s*");
+                String[] depArr = vals[2].split("\\s* \\s*");
                 StringBuilder sb = new StringBuilder();
                 int addedDeps = 0;
                 for (String d : depArr) {
