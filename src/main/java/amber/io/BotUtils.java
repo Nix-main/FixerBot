@@ -68,9 +68,9 @@ public class BotUtils {
         JsonObject pkg = findByTitle(title);
         if (pkg == null) return null;
 
-        String author = Objects.toString(ModFetcher.first(pkg, "owner", "namespace", "author"), "");
-        String description = Objects.toString(ModFetcher.first(pkg, "description"), "");
-        String icon = Objects.toString(ModFetcher.first(pkg, "icon"), "");
+        String author = Objects.toString(ModFetcher.get(pkg, "owner"), "");
+        String description = Objects.toString(ModFetcher.get(pkg, "description"), "");
+        String icon = Objects.toString(ModFetcher.get(pkg, "icon"), "");
 
         String downloadUrl = "";
         String deprecated = "";
@@ -93,13 +93,13 @@ public class BotUtils {
                 .orElseGet(() -> versions.get(versions.size() - 1).getAsJsonObject());
 
         if (chosenVersion != null) {
-            downloadUrl = ModFetcher.first(chosenVersion, "download_url", "package_url", "website_url");
-            description = Objects.toString(ModFetcher.first(chosenVersion, "description"), description);
-            icon = Objects.toString(ModFetcher.first(chosenVersion, "icon"), icon);
-            latestVersion = ModFetcher.first(chosenVersion, "version_number", "name");
-            name = ModFetcher.first(chosenVersion, "name");
+            downloadUrl = ModFetcher.get(chosenVersion, "download_url");
+            description = Objects.toString(ModFetcher.get(chosenVersion, "description"), description);
+            icon = Objects.toString(ModFetcher.get(chosenVersion, "icon"), icon);
+            latestVersion = ModFetcher.get(chosenVersion, "version_number");
+            name = ModFetcher.get(chosenVersion, "name");
             page = pkg.has("package_url") ? pkg.get("package_url").getAsString() : "";
-            website = ModFetcher.first(chosenVersion, "website_url");
+            website = ModFetcher.get(chosenVersion, "website_url");
             deprecated = pkg.has("is_deprecated") ? pkg.get("is_deprecated").getAsString() : "";
             if (chosenVersion.has("dependencies") && chosenVersion.get("dependencies").isJsonArray()) {
                 dependenciesCsv = StreamSupport.stream(chosenVersion.getAsJsonArray("dependencies").spliterator(), false)
@@ -126,14 +126,15 @@ public class BotUtils {
         String normWant = FixerBot.clean(title);
 
         for (JsonObject m : jsons) {
-            String t = ModFetcher.first(m, "name");
+            String t = ModFetcher.get(m, "name");
             if (t != null && t.trim().toLowerCase().equals(want)) return m;
             if (m.has("name") && !m.get("name").isJsonNull()) {
                 if (FixerBot.clean(m.get("name").getAsString()).equals(normWant)) return m;
             }
-            if (fieldContains(m, "name", want) || fieldContains(m, "description", want)) return m;
         }
-
+        for (JsonObject m : jsons) {
+            if (fieldContains(m, "name", want)) return m;
+        }
         return null;
     }
 
@@ -216,11 +217,11 @@ public class BotUtils {
      */
     public static List<String> getKeys(JsonObject obj) {
         List<String> keys = new ArrayList<>();
-        keys.add(ModFetcher.first(obj, "name"));
-        keys.add(ModFetcher.first(obj, "full_name"));
+        keys.add(ModFetcher.get(obj, "name"));
+        keys.add(ModFetcher.get(obj, "full_name"));
         if (obj.has("versions") && obj.get("versions").isJsonArray() && !obj.getAsJsonArray("versions").isEmpty()) {
             JsonObject v = obj.getAsJsonArray("versions").get(0).getAsJsonObject();
-            keys.add(ModFetcher.first(v, "name"));
+            keys.add(ModFetcher.get(v, "name"));
         }
         return keys;
     }

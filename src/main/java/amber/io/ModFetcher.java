@@ -52,14 +52,14 @@ public class ModFetcher {
     }
 
     /**
-     * Takes in a list of json keys and returns the value of the first one that exists.
+     * Takes in a json key and returns the value if it exists.
      *
      * @param o    The JsonObject to use when checking existence of the given keys.
-     * @param keys The keys to check for/return.
-     * @return The first found value, an empty string if none are found.
+     * @param k The key to check for/return.
+     * @return The value, an empty string if not found.
      */
-    public static String first(JsonObject o, String... keys) {
-        for (String k : keys) if (o.has(k) && !o.get(k).isJsonNull()) return o.get(k).getAsString();
+    public static String get(JsonObject o, String k) {
+        if (o.has(k) && !o.get(k).isJsonNull()) return o.get(k).getAsString();
         return "";
     }
 }

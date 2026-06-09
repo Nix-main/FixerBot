@@ -55,9 +55,13 @@ public class FixerBot {
      * Creates the bot, adds the listener.
      */
     public static void main(String[] args) {
-        JDA bot = BotInit.createBot();
-        bot.addEventListener(new MessageListener());
-        addSchedule();
+        try {
+            JDA bot = BotInit.createBot();
+            bot.addEventListener(new MessageListener());
+            addSchedule();
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     // Could be called within main but separated for javadoc purposes.
@@ -107,7 +111,7 @@ public class FixerBot {
             }
             eb.addField("Links", pageLink + " | " + downloadLink + (vals[9].isEmpty() ? "" : " | " + siteLink), false);
             if (!vals[2].isEmpty()) {
-                String[] depArr = vals[2].split("\\s* \\s*");
+                String[] depArr = vals[2].split("\\s*,\\s*");
                 StringBuilder sb = new StringBuilder();
                 int addedDeps = 0;
                 for (String d : depArr) {
@@ -122,8 +126,8 @@ public class FixerBot {
                         }
                     }
                 }
-                if (addedDeps >= 3) {
-                    sb.append("...");
+                if (addedDeps >= 3 && depArr.length > 3) {
+                    sb.append("...(").append(depArr.length-3).append(" more)\n");
                 }
                 if (!sb.isEmpty()) {
                     eb.addField("Dependencies", sb.toString().trim(), true);
